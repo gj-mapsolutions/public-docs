@@ -1,0 +1,434 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://xenterra.ai/stac-extensions/oriented-imagery/v1.0.0/schema.json#",
+	"title": "Oriented Imagery Extension",
+	"description": "STAC Oriented Imagery Extension for STAC Items and STAC Collections, based on the ArcGIS Oriented Imagery data model.",
+	"oneOf": [
+		{
+			"$comment": "STAC Item schema",
+			"allOf": [
+				{
+					"$ref": "#/definitions/stac_extensions"
+				},
+				{
+					"type": "object",
+					"required": [
+						"type",
+						"properties",
+						"assets"
+					],
+					"properties": {
+						"type": {
+							"const": "Feature"
+						},
+						"properties": {
+							"allOf": [
+								{
+									"$ref": "#/definitions/item_fields"
+								}
+							]
+						},
+						"assets": {
+							"type": "object",
+							"additionalProperties": {
+								"$ref": "#/definitions/asset_fields"
+							}
+						}
+					}
+				}
+			]
+		},
+		{
+			"$comment": "STAC Collection schema",
+			"allOf": [
+				{
+					"type": "object",
+					"required": [
+						"type",
+						"properties"
+					],
+					"properties": {
+						"type": {
+							"const": "Collection"
+						}
+					}
+				},
+				{
+					"$ref": "#/definitions/stac_extensions"
+				},
+				{
+					"properties": {
+						"properties": {
+							"$ref": "#/definitions/collection_fields"
+						}
+					}
+				}
+			]
+		}
+	],
+	"definitions": {
+		"stac_extensions": {
+			"type": "object",
+			"required": [
+				"stac_extensions"
+			],
+			"properties": {
+				"stac_extensions": {
+					"type": "array",
+					"contains": {
+						"const": "https://xenterra.ai/stac-extensions/oriented-imagery/v1.0.0/schema.json"
+					}
+				}
+			}
+		},
+		"item_fields": {
+			"type": "object",
+			"properties": {
+				"oi:name": {
+					"description": "Optional alias name that identifies the oriented image.",
+					"type": "string"
+				},
+				"oi:camera_heading": {
+					"description": "Camera heading in degrees. North is 0 degrees and positive rotation is clockwise. -999 may be used when the orientation is unknown.",
+					"type": "number",
+					"minimum": -999,
+					"maximum": 360
+				},
+				"oi:camera_pitch": {
+					"description": "Camera pitch in degrees. 0 degrees is vertically down, 90 degrees is horizontal, and 180 degrees is vertically up.",
+					"type": "number",
+					"minimum": 0,
+					"maximum": 180
+				},
+				"oi:camera_roll": {
+					"description": "Camera roll in degrees.",
+					"type": "number",
+					"minimum": -90,
+					"maximum": 90
+				},
+				"oi:camera_height": {
+					"description": "Height of the camera above the ground in meters.",
+					"type": "number",
+					"minimum": 0
+				},
+				"oi:horizontal_field_of_view": {
+					"description": "Horizontal field of view of the camera in degrees.",
+					"type": "number",
+					"minimum": 0,
+					"maximum": 360
+				},
+				"oi:vertical_field_of_view": {
+					"description": "Vertical field of view of the camera in degrees.",
+					"type": "number",
+					"minimum": 0,
+					"maximum": 180
+				},
+				"oi:near_distance": {
+					"description": "Nearest usable distance of the imagery from the camera position in meters.",
+					"type": "number",
+					"minimum": 0
+				},
+				"oi:far_distance": {
+					"description": "Farthest usable distance of the imagery from the camera position in meters.",
+					"type": "number",
+					"exclusiveMinimum": 0
+				},
+				"oi:camera_offset": {
+					"description": "X and Y offset between the actual camera location and the feature point.",
+					"type": "string"
+				},
+				"oi:oriented_imagery_type": {
+					"description": "Type of oriented imagery represented by the item.",
+					"type": "string",
+					"enum": [
+						"Horizontal",
+						"Oblique",
+						"Nadir",
+						"360",
+						"Inspection"
+					]
+				},
+				"oi:image_rotation": {
+					"description": "Additional image rotation in degrees relative to the camera orientation. This rotation is added to camera roll.",
+					"type": "number",
+					"minimum": -360,
+					"maximum": 360
+				},
+				"oi:orientation_accuracy": {
+					"description": "Orientation accuracy represented as eight semicolon-delimited standard deviation values in the order: camera XY, camera Z, camera heading, camera pitch, camera roll, near distance, far distance, terrain elevation.",
+					"type": "string"
+				},
+				"oi:matrix": {
+					"description": "Row-wise rotation matrix defining the transformation from image space to map space. Nine floating-point values.",
+					"type": "string"
+				},
+				"oi:focal_length": {
+					"description": "Focal length of the camera lens.",
+					"type": "number",
+					"exclusiveMinimum": 0
+				},
+				"oi:principal_x": {
+					"description": "X-coordinate of the principal point of autocollimation. Uses the same unit as focal length.",
+					"type": "number"
+				},
+				"oi:principal_y": {
+					"description": "Y-coordinate of the principal point of autocollimation. Uses the same unit as focal length.",
+					"type": "number"
+				},
+				"oi:radial": {
+					"description": "Radial lens distortion coefficients K1, K2, and K3.",
+					"type": "string"
+				},
+				"oi:tangential": {
+					"description": "Tangential lens distortion coefficients P1 and P2.",
+					"type": "string"
+				},
+				"oi:a0": {
+					"description": "A0 coefficient of the affine transformation from ground space to image space.",
+					"type": "number"
+				},
+				"oi:a1": {
+					"description": "A1 coefficient of the affine transformation from ground space to image space.",
+					"type": "number"
+				},
+				"oi:a2": {
+					"description": "A2 coefficient of the affine transformation from ground space to image space.",
+					"type": "number"
+				},
+				"oi:b0": {
+					"description": "B0 coefficient of the affine transformation from ground space to image space.",
+					"type": "number"
+				},
+				"oi:b1": {
+					"description": "B1 coefficient of the affine transformation from ground space to image space.",
+					"type": "number"
+				},
+				"oi:b2": {
+					"description": "B2 coefficient of the affine transformation from ground space to image space.",
+					"type": "number"
+				},
+				"oi:sequence_order": {
+					"description": "Unique sequence number or string used to control sequential navigation through oriented imagery.",
+					"oneOf": [
+						{
+							"type": "number"
+						},
+						{
+							"type": "string"
+						}
+					]
+				}
+			},
+			"patternProperties": {
+				"^(?!oi:)": {}
+			},
+			"additionalProperties": false
+		},
+		"collection_fields": {
+			"type": "object",
+			"properties": {
+				"oi:maximum_distance": {
+					"description": "Maximum search distance used when querying the oriented imagery dataset. Measured in meters.",
+					"type": "number",
+					"minimum": 0
+				},
+				"oi:coverage_percentage": {
+					"description": "Percentage used to modify the computed image ground footprint. Negative values reduce the footprint and positive values increase it.",
+					"type": "number",
+					"minimum": -50,
+					"maximum": 50
+				},
+				"oi:elevation_source": {
+					"description": "Elevation source configuration used by the oriented imagery dataset.",
+					"type": "object",
+					"properties": {
+						"url": {
+							"description": "URL of the elevation source, typically an ArcGIS ImageServer or other elevation service.",
+							"type": "string",
+							"format": "uri"
+						},
+						"lod": {
+							"description": "Level of detail or zoom level used when requesting elevation data.",
+							"type": "integer",
+							"minimum": 0
+						},
+						"raster_function": {
+							"description": "Raster function processing template applied to the elevation source.",
+							"type": "string"
+						},
+						"constant_elevation": {
+							"description": "Constant ground elevation used when a constant elevation is configured.",
+							"type": "number"
+						}
+					}
+				},
+				"oi:horizontal_measurement_unit": {
+					"description": "Unit used for horizontal measurements.",
+					"type": "string",
+					"enum": [
+						"METER",
+						"FEET"
+					]
+				},
+				"oi:vertical_measurement_unit": {
+					"description": "Unit used for vertical measurements.",
+					"type": "string",
+					"enum": [
+						"METER",
+						"FEET"
+					]
+				},
+				"oi:time_interval_unit": {
+					"description": "Time unit used when filtering oriented imagery.",
+					"type": "string",
+					"enum": [
+						"MINUTES",
+						"HOURS",
+						"DAYS",
+						"WEEKS",
+						"MONTHS",
+						"YEARS"
+					]
+				},
+				"oi:camera_heading": {
+					"description": "Camera heading in degrees. North is 0 degrees and positive rotation is clockwise. -999 may be used when the orientation is unknown.",
+					"type": "number",
+					"minimum": -999,
+					"maximum": 360
+				},
+				"oi:camera_pitch": {
+					"description": "Camera pitch in degrees. 0 degrees is vertically down, 90 degrees is horizontal, and 180 degrees is vertically up.",
+					"type": "number",
+					"minimum": 0,
+					"maximum": 180
+				},
+				"oi:camera_roll": {
+					"description": "Camera roll in degrees.",
+					"type": "number",
+					"minimum": -90,
+					"maximum": 90
+				},
+				"oi:camera_height": {
+					"description": "Height of the camera above the ground in meters.",
+					"type": "number",
+					"minimum": 0
+				},
+				"oi:horizontal_field_of_view": {
+					"description": "Horizontal field of view of the camera in degrees.",
+					"type": "number",
+					"minimum": 0,
+					"maximum": 360
+				},
+				"oi:vertical_field_of_view": {
+					"description": "Vertical field of view of the camera in degrees.",
+					"type": "number",
+					"minimum": 0,
+					"maximum": 180
+				},
+				"oi:near_distance": {
+					"description": "Nearest usable distance of the imagery from the camera position in meters.",
+					"type": "number",
+					"minimum": 0
+				},
+				"oi:far_distance": {
+					"description": "Farthest usable distance of the imagery from the camera position in meters.",
+					"type": "number",
+					"exclusiveMinimum": 0
+				},
+				"oi:oriented_imagery_type": {
+					"description": "Type of oriented imagery represented by the item.",
+					"type": "string",
+					"enum": [
+						"Horizontal",
+						"Oblique",
+						"Nadir",
+						"360",
+						"Inspection"
+					]
+				},
+				"oi:image_rotation": {
+					"description": "Additional image rotation in degrees relative to the camera orientation. This rotation is added to camera roll.",
+					"type": "number",
+					"minimum": -360,
+					"maximum": 360
+				},
+				"oi:orientation_accuracy": {
+					"description": "Orientation accuracy represented as eight semicolon-delimited standard deviation values in the order: camera XY, camera Z, camera heading, camera pitch, camera roll, near distance, far distance, terrain elevation.",
+					"type": "string"
+				},
+				"oi:image_path_prefix": {
+					"description": "Prefix used to build the image path together with the image reference field.",
+					"type": "string"
+				},
+				"oi:image_path_suffix": {
+					"description": "Suffix used to build the image path together with the image reference field.",
+					"type": "string"
+				},
+				"oi:depth_image_path_prefix": {
+					"description": "Prefix used to build the depth image path together with the depth image reference field.",
+					"type": "string"
+				},
+				"oi:depth_image_path_suffix": {
+					"description": "Suffix used to build the depth image path together with the depth image reference field.",
+					"type": "string"
+				},
+				"oi:dem_path_prefix": {
+					"description": "Prefix used to build the digital elevation model path.",
+					"type": "string"
+				},
+				"oi:dem_path_suffix": {
+					"description": "Suffix used to build the digital elevation model path.",
+					"type": "string"
+				},
+				"oi:image_geometry_field": {
+					"description": "Field containing image-space geometry for features overlaid on oriented imagery.",
+					"type": "string",
+					"default": "ImageGeometry"
+				},
+				"oi:image_reference_field": {
+					"description": "Field containing the unique reference ID of the oriented image associated with an overlaid feature.",
+					"type": "string",
+					"default": "OIObjectID"
+				},
+				"oi:reference_id_field": {
+					"description": "Field containing the unique reference ID of the oriented image on which a feature was captured.",
+					"type": "string",
+					"default": "ObjectID"
+				},
+				"oi:sequence_order_field": {
+					"description": "Field containing sequence numbers used to control sequential navigation.",
+					"type": "string",
+					"default": "SequenceOrder"
+				},
+				"oi:vertical_search_range": {
+					"description": "Maximum vertical search distance used when querying dataset features. Measured in meters.",
+					"type": "number",
+					"minimum": 0
+				}
+			},
+			"patternProperties": {
+				"^(?!oi:)": {}
+			},
+			"additionalProperties": false
+		},
+		"asset_fields": {
+			"type": "object",
+			"properties": {
+				"oi:asset_type": {
+					"description": "Role of the asset within the oriented imagery item.",
+					"type": "string",
+					"enum": [
+						"data",
+						"depth",
+						"elevation",
+						"thumbnail"
+					]
+				}
+			},
+			"patternProperties": {
+				"^(?!oi:)": {}
+			},
+			"additionalProperties": false
+		}
+	}
+}
