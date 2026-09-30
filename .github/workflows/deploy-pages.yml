@@ -1,4 +1,4 @@
-name: pages build and deployment
+name: Pages build and Deployment
 
 on:
   push:
